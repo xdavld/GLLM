@@ -1,0 +1,1 @@
+# Entwurf und Implementierung eines LLM-basierten synthetischen Frameworks für eine datengetriebene Produktinnovation am Beispiel der Bierherstellung
