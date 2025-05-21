@@ -1,0 +1,18 @@
+/var/spool/slurmd/job244613/slurm_script: line 12: /home/ds/ds_ds/ds_wi22230/venvs/llm-gan/bin/activate: No such file or directory
+Starting Python script at Wed May 21 11:29:14 AM CEST 2025
+slurmstepd: error: *** JOB 244613 ON uc3n071 CANCELLED AT 2025-05-21T11:29:21 ***
+
+============================= JOB FEEDBACK =============================
+
+NodeName=uc3n071
+Job ID: 244613
+Cluster: uc3
+User/Group: ds_wi22230/ds_ds
+State: CANCELLED (exit code 0)
+Nodes: 1
+Cores per node: 2
+CPU Utilized: 00:00:00
+CPU Efficiency: 0.00% of 00:00:52 core-walltime
+Job Wall-clock time: 00:00:26
+Memory Utilized: 10.08 MB
+Memory Efficiency: 0.25% of 4.00 GB (4.00 GB/node)
