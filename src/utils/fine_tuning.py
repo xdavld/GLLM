@@ -1,4 +1,9 @@
-def fine_tune(args):
+from trl import SFTTrainer, SFTConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+from utils.data import get_data
+
+def fine_tune(general_cfg, data_cfg, training_cfg):
     """
     Fine-tunes the given model using the SFTTrainer.
 
@@ -11,32 +16,32 @@ def fine_tune(args):
     Returns:
         The fine-tuned model.
     """
-    from trl import SFTTrainer, SFTConfig
-    from transformers import AutoModelForCausalLM, AutoTokenizer
 
-    model = AutoModelForCausalLM.from_pretrained(args.model_name_or_path)
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name_or_path)
+    data_cfg["seed"] = general_cfg.get("seed", None)
+    data_cfg["operation"] = general_cfg.get("operation", None)
+    datasets = get_data(args=data_cfg)
+
+    model_name_or_path = general_cfg.get("model_name_or_path", None)
+
+    model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+    tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
+
+    temperature = training_cfg.pop("temperature", None)
+    if "learning_rate" in training_cfg:
+        lr = training_cfg["learning_rate"]
+        training_cfg["learning_rate"] = float(lr)
 
     training_args = SFTConfig(
-        output_dir=output_dir,
-        per_device_train_batch_size=16,
-        per_device_eval_batch_size=16,
-        num_train_epochs=12,
-        save_steps=500,
-        logging_steps=100,
-        evaluation_strategy="epoch",
-        eval_steps=500,
-        save_total_limit=5,
-        load_best_model_at_end=True,
+        **training_cfg,
         max_length=tokenizer.model_max_length,
     )
 
     trainer = SFTTrainer(
         model=model,
         args=training_args,
-        train_dataset=train_dataset,
-        eval_dataset=eval_dataset,
-        tokenizer=tokenizer,
+        train_dataset=datasets["train"],
+        eval_dataset=datasets["eval"] if datasets["eval"] else None,
+        processing_class=tokenizer
     )
 
     trainer.train()

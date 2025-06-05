@@ -1,0 +1,24 @@
+General:
+  operation: "fine-tuning"
+  model_name_or_path: "../models/Llama-3.1-8B-Instruct/Base"
+
+Data:
+  prompt_template_path: "templates/generator.txt"
+  sample_size: 5
+  dataset_path: "data/test.csv"
+  dataset_splits:
+    - "train"
+    - "eval"
+  eval_size: 0.2
+  test_size: 0.1
+  seed: 42
+
+Training:
+  output_dir: "./checkpoints"
+  learning_rate: 5e-5
+  fp16: True
+  per_device_train_batch_size: 16
+  per_device_eval_batch_size: 16
+  num_train_epochs: 3
+  gradient_accumulation_steps: 1
+  temperature: 0.7
