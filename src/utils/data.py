@@ -1,4 +1,5 @@
 import json
+import random
 from typing import List
 from datasets import Dataset, load_dataset
 
@@ -14,6 +15,7 @@ def get_data(args):
     Returns:
         The loaded dataset.
     """
+    random.seed(args["seed"])
 
     datasets = load_dataset(
         "csv",
@@ -22,7 +24,7 @@ def get_data(args):
 
     datasets["train"] = datasets["train"].shuffle(seed=args["seed"])
     
-    datasets["train"] = apply_prompt_template(operation=args["operation"], dataset=datasets["train"], prompt_template_path=args["prompt_template_path"], sample_size=args["sample_size"])
+    datasets["train"] = apply_prompt_template(operation=args["operation"], dataset=datasets["train"], prompt_template_path=args["prompt_template_path"], sample_size=args["sample_size"], output_size=args["output_size"])
 
     if args["operation"] == "fine-tuning":
         datasets = split_dataset(datasets, dataset_splits=args["dataset_splits"], eval_size=args["eval_size"], test_size=args["test_size"])
@@ -30,7 +32,7 @@ def get_data(args):
     return datasets
 
 
-def apply_prompt_template(operation: str, dataset: Dataset, prompt_template_path: str, sample_size: int):
+def apply_prompt_template(operation: str, dataset: Dataset, prompt_template_path: str, sample_size: int, output_size: int):
     """
     Apply the prompt template to the dataset.
 
@@ -56,21 +58,46 @@ def apply_prompt_template(operation: str, dataset: Dataset, prompt_template_path
         ]
 
         prompts = []
+        input_jsons = []
         for chunk in chunks:
-            input_json = "[\n" + ",\n".join(chunk) + "\n]"
+            input_json = "[" + ",".join(chunk) + "]"
+            input_jsons.append(input_json)
             prompt = (
                 template
                 .replace("{{input}}", input_json)
-                .replace("{{sample_size}}", str(sample_size))
+                .replace("{{output_size}}", str(output_size))
             )
             prompts.append(prompt)
         
-        return Dataset.from_dict({"prompt": prompts})
+        return Dataset.from_dict({"prompt": prompts, "data": input_jsons})
     
-    if operation == "fine-tuning":
+    elif operation == "training":
         chunks = [
-            json_strings[i : i + sample_size * 2]
-            for i in range(0, len(json_strings) - sample_size*2 + 1, sample_size*2)
+            json_strings[i : i + sample_size]
+            for i in range(0, len(json_strings) - sample_size + 1, sample_size)
+        ]
+
+        prompts = []
+        input_jsons = []
+        for chunk in chunks:
+            sample = random.choice(chunk)
+            input_json_sample = f"[{sample}]"
+            input_jsons.append(input_json_sample)
+
+            input_json = "[" + ",".join(chunk) + "]"
+            prompt = (
+                template
+                .replace("{{input}}", input_json)
+                .replace("{{output_size}}", str(output_size))
+            )
+            prompts.append(prompt)
+        
+        return Dataset.from_dict({"prompt": prompts, "data": input_jsons})
+    
+    elif operation == "fine-tuning":
+        chunks = [
+            json_strings[i : i+sample_size+output_size]
+            for i in range(0, len(json_strings) - (sample_size+output_size) + 1, sample_size+output_size)
         ]
 
         prompts = []
@@ -79,13 +106,13 @@ def apply_prompt_template(operation: str, dataset: Dataset, prompt_template_path
             prompt_examples = chunk[:sample_size]
             completion_examples = chunk[sample_size:]
 
-            prompt_json = "[\n" + ",\n".join(prompt_examples) + "\n]"
-            completion_json = "[\n" + ",\n".join(completion_examples) + "\n]"
+            prompt_json = "[" + ",".join(prompt_examples) + "]"
+            completion_json = "[" + ",".join(completion_examples) + "]"
 
             prompt_text = (
                 template
                 .replace("{{input}}", prompt_json)
-                .replace("{{sample_size}}", str(sample_size))
+                .replace("{{output_size}}", str(output_size))
             )
 
             prompts.append(prompt_text)

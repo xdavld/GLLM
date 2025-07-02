@@ -1,17 +1,14 @@
 General:
-  operation: "synthesization"
+  operation: "synthesization_leo"
   generator_model_path: "../models/Llama-3.1-8B-Instruct/Base"
   discriminator_model_path: "../models/Llama-3.2-1B-Instruct/Base"
 
 Data:
-  # For getData()
-  prompt_template_path: "templates/generator.txt"
-  # For synthesize Data 
   generator_prompt_template_path: "templates/generator.txt"
-  discriminator_prompt_template_path: "templates/discriminiator.txt"
+  discriminator_prompt_template_path: "templates/discriminator.txt"
   sample_size: 5
   output_size: 1
-  dataset_path: "data/public/test2.csv"
+  dataset_path: "data/public/test.csv"
   output_path: "data/synthetic/generated_data.csv"
   seed: 42
 

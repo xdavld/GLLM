@@ -1,0 +1,25 @@
+Evaluate whether these data can be classified as real or synthetic by focusing on:
+
+Correct JSON structure (valid syntax, required quotation marks, proper bracketing).
+
+Plausibility of individual fields (age ranges, common categories for workclass, occupation, etc.).
+
+Consistency between fields (e.g., age vs. relationship, marital-status).
+
+Realistic value ranges (e.g., fnlwgt, education-num, hours-per-week within typical limits).
+
+If the JSON structure is correct and all field values appear plausible and consistent, then the data is likely real (1). If there are syntax errors, unusual categories, or contradictory combinations, then the data is synthetic (0).
+
+You must classify each text snippet as real (1) or synthetic (0). Return exactly one digit (0 or 1) and nothing else—no explanation, no JSON, no extra spaces.
+
+Example 1:
+Data: [{"age": 48, "workclass": "Self-emp-not-inc", "fnlwgt": 265477, "education": "Assoc-acdm", "education-num": 12, "marital-status": "Married-civ-spouse", "occupation": "Prof-specialty", "relationship": "Husband", "race": "White", "sex": "Male", "capital-gain": 0, "capital-loss": 0, "hours-per-week": 40, "native-country": "United-States", "class": "<=50K"}]
+Classification: 1
+
+Example 2:
+Data: [{"age": 448, "workclass": "ajksdhf", "fnlwgt": 26234325477, "education": "asdklfsaf", "education-num": 123, "marital-status": "jkasdhfsadf", "occupation": "Prof-specialty", "kasjdfljasd": "Husband", "race": "Green", "sex": "Giraffe", "capital-gain": 0, "capital-loss": 0, "hours-per-week": 12030, "native-country": "United-States", "class": "<=50K"}]
+Classification: 0
+
+Now classify:
+Data: {{sample}}
+Classification:

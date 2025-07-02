@@ -4,7 +4,9 @@ import logging
 
 from utils.args import load_config
 from utils.fine_tuning import fine_tune
+from utils.training import train
 from utils.synthesization import synthesize
+#from utils.synthesization_leo import synthesize_leo
 
 def main():
     logging.basicConfig(
@@ -47,6 +49,19 @@ def main():
         except Exception as e:
             logging.exception("An error occurred during fine-tuning: %s", e)
             raise
+    
+    elif op == "training":
+        logging.info("Starting training process.")
+        general_cfg = cfg.get("General", {}) if isinstance(cfg.get("General"), dict) else {}
+        data_cfg = cfg.get("Data", {}) if isinstance(cfg.get("Data"), dict) else {}
+        training_cfg = cfg.get("Training", {}) if isinstance(cfg.get("Training"), dict) else {}
+
+        try:
+            train(general_cfg=general_cfg, data_cfg=data_cfg, training_cfg=training_cfg)
+            logging.info("Training completed successfully.")
+        except Exception as e:
+            logging.exception("An error occurred during training: %s", e)
+            raise
 
     elif op == "synthesization":
         logging.info("Starting synthesization process.")
@@ -56,6 +71,19 @@ def main():
 
         try:
             synthesize(general_cfg=general_cfg, data_cfg=data_cfg, training_cfg=training_cfg)
+            logging.info("Synthesization completed successfully.")
+        except Exception as e:
+            logging.exception("An error occurred during synthesization: %s", e)
+            raise
+    
+    elif op == "synthesization_leo":
+        logging.info("Starting synthesization process.")
+        general_cfg = cfg.get("General", {}) if isinstance(cfg.get("General"), dict) else {}
+        data_cfg = cfg.get("Data", {}) if isinstance(cfg.get("Data"), dict) else {}
+        training_cfg = cfg.get("Training", {}) if isinstance(cfg.get("Training"), dict) else {}
+
+        try:
+            synthesize_leo(general_cfg=general_cfg, data_cfg=data_cfg, training_cfg=training_cfg)
             logging.info("Synthesization completed successfully.")
         except Exception as e:
             logging.exception("An error occurred during synthesization: %s", e)

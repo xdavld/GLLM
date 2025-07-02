@@ -1,12 +1,10 @@
 General:
-  operation: "synthesization"
-  generator_model_path: "../models/Llama-3.1-8B-Instruct/Base"
-  discriminator_model_path: "../models/Llama-3.2-1B-Instruct/Base"
+  operation: "training"
+  generator_name_or_path: "../models/Llama-3.2-3B-Instruct/Base"
+  discriminator_name_or_path: "../models/Llama-3.2-1B-Instruct/Base"
 
 Data:
-  # For getData()
   prompt_template_path: "templates/generator.txt"
-  # For synthesize Data 
   generator_prompt_template_path: "templates/generator.txt"
   discriminator_prompt_template_path: "templates/discriminiator.txt"
   sample_size: 5
@@ -16,6 +14,14 @@ Data:
   seed: 42
 
 Training:
+  generator_lr: 5e-5
+  discriminator_lr: 5e-5
+  alpha: 0.5
+  num_epochs: 3
+  batch_size: 16
+  output_dir: "../models/LLMGAN"
+
+
   max_new_tokens: 512
   temperature: 0.8
   top_k: 50

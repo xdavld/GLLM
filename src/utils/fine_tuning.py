@@ -1,3 +1,6 @@
+import os
+import glob
+import shutil
 from trl import SFTTrainer, SFTConfig
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -23,10 +26,9 @@ def fine_tune(general_cfg, data_cfg, training_cfg):
 
     model_name_or_path = general_cfg.get("model_name_or_path", None)
 
-    model = AutoModelForCausalLM.from_pretrained(model_name_or_path)
+    model = AutoModelForCausalLM.from_pretrained(model_name_or_path, attn_implementation="flash_attention_2")
     tokenizer = AutoTokenizer.from_pretrained(model_name_or_path)
 
-    temperature = training_cfg.pop("temperature", None)
     if "learning_rate" in training_cfg:
         lr = training_cfg["learning_rate"]
         training_cfg["learning_rate"] = float(lr)
@@ -45,4 +47,18 @@ def fine_tune(general_cfg, data_cfg, training_cfg):
     )
 
     trainer.train()
-    return trainer.model
+
+    if trainer.is_world_process_zero():
+
+        output_dir = training_cfg.get("output_dir", "../output_dir")
+        for path in glob.glob(os.path.join(output_dir, "checkpoint*")):
+            if os.path.isdir(path):
+                try:
+                    shutil.rmtree(path)
+                except Exception as e:
+                    print(f"Warning: Could not delete {path}: {e}")
+
+        # Save the best model
+        trainer.model.save_pretrained(output_dir)
+        # Save the tokenizer
+        tokenizer.save_pretrained(output_dir)
