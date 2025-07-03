@@ -75,20 +75,53 @@ class LLMGAN:
 
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
-
-    def generate(self, data, gen_generation_params, **kwargs):
-        self.generator.set_mode("generate")
-        self.discriminator.set_mode("generate")
-
-        generated_texts = self.generator.generate(data["prompt"], gen_generation_params)
-        prompts, labels = self.format_discriminator_data(real_data=data["data"], generated_texts=generated_texts)
-        results = self.discriminator.predict(prompts, labels)
     
-        print("{"+f"Discriminator Accuracy: {results['accuracy']}"+"}")
-
-        output_dir = kwargs.get("output_dir", "../output")
+        def generate(self, data, gen_generation_params, **kwargs):
+            self.generator.set_mode("generate")
+            self.discriminator.set_mode("generate")
+    
+            generated_texts = self.generator.generate(data["prompt"], gen_generation_params)
+            prompts, labels = self.format_discriminator_data(real_data=data["data"], generated_texts=generated_texts)
+            results = self.discriminator.predict(prompts, labels)
         
-
+            print("{"+f"Discriminator Accuracy: {results['accuracy']}"+"}")
+    
+            output_dir = kwargs.get("output_dir", "../output")
+            
+            # Save the generated texts as .txt
+            with open(f"{output_dir}/generated_texts.txt", "w") as f:
+                for text in generated_texts:
+                    f.write(text + "\n")
+    
+            # Parse JSON strings and save as CSV
+            rows = []
+            for text in generated_texts:
+                try:
+                    # Each text is a JSON object or list of objects
+                    data_list = json.loads(text)
+                    if isinstance(data_list, dict):
+                        data_list = [data_list]
+                    rows.extend(data_list)
+                except Exception as e:
+                    print(f"Error parsing JSON: {e}\nText: {text}")
+    
+            # Save all generated data
+            if rows:
+                df = pd.DataFrame(rows)
+                df.to_csv(f"{output_dir}/generated_data_all.csv", index=False)
+            else:
+                print("No valid data to save as CSV found.")
+    
+            # Save only samples predicted as real by the discriminator
+            if rows and "labels" in results:
+                pred_labels = results["labels"]
+                real_indices = [i for i, label in enumerate(pred_labels) if label == 1]
+                real_rows = [rows[i] for i in real_indices if i < len(rows)]
+                if real_rows:
+                    df_real = pd.DataFrame(real_rows)
+                    df_real.to_csv(f"{output_dir}/generated_data_real.csv", index=False)
+                else:
+                    print("No samples predicted as real by the discriminator.")
         
 
 class GANModel(ABC):
