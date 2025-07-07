@@ -20,6 +20,7 @@ def get_data(args):
     datasets = load_dataset(
         "csv",
         data_files={"train": args["dataset_path"]},
+        delimiter=";"
     )
 
     datasets["train"] = datasets["train"].shuffle(seed=args["seed"])

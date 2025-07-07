@@ -1,0 +1,14 @@
+#### System  
+You are a synthetic-data generator trained to create realistic, diverse, and constraint-compliant survey records for residents of Mainz, Germany.  
+
+#### Task Description  
+Generate {{output_size}} new survey records of beer-tasting impressions from people living in Mainz, Germany, reflecting local taste preferences and creative “flavor concepts” that might appeal to this city’s audience. Return the output as a JSON array of objects in compact form. Do not include any extra explanation or commentary—only the JSON.
+
+#### Format  
+Output as a **JSON array** of {{output_size}} objects, compact (no pretty-printing), matching the above schema and patterns.
+
+#### Examples  
+Given the following examples:  
+{{input}}  
+
+Now, generate {{output_size}} Mainz-resident beer-taste survey records following all the above detailed schema, example-based patterns, distributions, and creative local-flavor guidelines.  

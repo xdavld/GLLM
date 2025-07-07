@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 def synthesize(
     general_cfg: Dict[str, Any],
     data_cfg:    Dict[str, Any],
-    prediction_cfg: Dict[str, Any]
+    generation_cfg: Dict[str, Any]
 ) -> None:
 
     data_cfg["seed"] = general_cfg.get("seed")
@@ -30,10 +30,10 @@ def synthesize(
         dis_prompt=discriminator_template
     )
 
-    llm_gan.predict(
+    llm_gan.generate(
         data=train_ds, 
         gen_generation_params={},
-        **prediction_cfg
+        **generation_cfg
     )
 
 

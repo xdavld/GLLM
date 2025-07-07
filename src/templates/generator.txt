@@ -1,8 +1,0 @@
-You are a data augmentation assistant. Given the following examples:
-{{input}}
-
-Generate **{{output_size}}** new synthetic examples that follow the same format, style, and structure as above.
-Return the output as a JSON array of objects in compact form (no newlines or extra spaces, e.g. [{"name":"Lukas","age":41,"city":"Hamburg"}]).
-Do _not_ include any extra explanation or commentary—only the JSON.
-
-Now generate the synthetic data:

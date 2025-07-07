@@ -43,7 +43,7 @@ def fine_tune(general_cfg, data_cfg, training_cfg):
         args=training_args,
         train_dataset=datasets["train"],
         eval_dataset=datasets["eval"] if datasets["eval"] else None,
-        processing_class=tokenizer
+        processing_class=tokenizer,
     )
 
     trainer.train()

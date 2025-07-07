@@ -1,12 +1,12 @@
 General:
   operation: "fine-tuning"
-  model_name_or_path: "../models/Llama-3.1-8B-Instruct/Base"
+  model_name_or_path: "../models/Llama-3.2-3B-Instruct/Base"
 
 Data:
-  prompt_template_path: "templates/generator.txt"
-  sample_size: 5
+  prompt_template_path: "templates/generator_mainz.txt"
+  sample_size: 3
   output_size: 1
-  dataset_path: "data/public/test.csv"
+  dataset_path: "data/private/kkr_data_cleaned_v2.csv"
   dataset_splits:
     - "train"
     - "eval"
@@ -15,12 +15,12 @@ Data:
   seed: 42
 
 Training:
-  output_dir: "../models/Llama-3.1-8B-Instruct/FineTuned"
+  output_dir: "../models/Llama-3.2-3B-Instruct/FineTuned/Mainz"
   learning_rate: 5e-5
   fp16: True
-  per_device_train_batch_size: 16
-  per_device_eval_batch_size: 16
-  num_train_epochs: 3
+  per_device_train_batch_size: 1
+  per_device_eval_batch_size: 1
+  num_train_epochs: 5
   padding_free: True
   gradient_accumulation_steps: 1
   eval_strategy: "epoch"

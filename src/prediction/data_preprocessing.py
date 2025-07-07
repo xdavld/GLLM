@@ -1,15 +1,15 @@
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.preprocessing import LabelEncoder, MinMaxScaler
 from sklearn.model_selection import train_test_split
 import torch
 import torch.nn.functional as F
 import re
 
-class BeerDataProcessor:
+class DataProcessor:
     def __init__(self):
         self.label_encoders = {}
-        self.scaler = StandardScaler()
+        self.scaler = MinMaxScaler(feature_range=(0, 1))
         self.text_vocab = {}
         self.vocab_size = 0
         
@@ -90,12 +90,13 @@ class BeerDataProcessor:
                 numeric_data = np.nan_to_num(numeric_data, nan=0.0, posinf=0.0, neginf=0.0)
             
             # Normalize only if we have valid data
-            if numeric_data.shape[0] > 1 and np.std(numeric_data) > 1e-10:
+            # Normalize all numeric columns into [0,1]
+            if numeric_data.shape[0] > 1:
                 numeric_data = self.scaler.fit_transform(numeric_data)
             else:
-                print("Warning: Cannot normalize data, using raw values")
-                # Still fit scaler for consistency
+                # still fit the scaler so it’s defined
                 self.scaler.fit(numeric_data)
+
         else:
             print("Warning: No numeric columns found")
             numeric_data = np.zeros((len(df), 1))  # Create dummy data
@@ -270,13 +271,6 @@ class BeerDataProcessor:
             '46-54': 3,
             '55-65': 4,
             '65+': 5,
-            # Handle potential variations
-            '16-25': 0,
-            '25-35': 1,
-            '35-45': 2,
-            '45-54': 3,
-            '54-65': 4,
-            '65+': 5
         }
         
         print(f"Unique age values: {df['age'].unique()}")
@@ -343,7 +337,7 @@ class BeerDataProcessor:
 
 # Example usage:
 if __name__ == '__main__':
-    processor = BeerDataProcessor()
+    processor = DataProcessor()
     
     # Process your data
     data = processor.prepare_training_data('your_beer_survey.csv')

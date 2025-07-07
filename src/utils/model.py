@@ -1,6 +1,9 @@
+import os
 import re
+import json
 import torch
 import random
+import pandas as pd
 from tqdm import tqdm
 import torch.nn.functional as F
 from abc import ABC, abstractmethod
@@ -63,11 +66,11 @@ class LLMGAN:
 
             output_dir = kwargs.get("output_dir", "../output")
 
-            output_dir_gen = output_dir+"/Generator/chekpoint-"+str(epoch+1)
+            output_dir_gen = output_dir+"/Generator/checkpoint-"+str(epoch+1)
             self.generator.get_model().save_pretrained(output_dir_gen)
             self.generator.get_tokenizer().save_pretrained(output_dir_gen)
 
-            output_dir_dis = output_dir+"/Discriminator/chekpoint-"+str(epoch+1)
+            output_dir_dis = output_dir+"/Discriminator/checkpoint-"+str(epoch+1)
             self.discriminator.get_model().save_pretrained(output_dir_dis)
             self.discriminator.get_tokenizer().save_pretrained(output_dir_dis)
 
@@ -76,52 +79,83 @@ class LLMGAN:
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
     
-        def generate(self, data, gen_generation_params, **kwargs):
-            self.generator.set_mode("generate")
-            self.discriminator.set_mode("generate")
-    
-            generated_texts = self.generator.generate(data["prompt"], gen_generation_params)
-            prompts, labels = self.format_discriminator_data(real_data=data["data"], generated_texts=generated_texts)
-            results = self.discriminator.predict(prompts, labels)
-        
-            print("{"+f"Discriminator Accuracy: {results['accuracy']}"+"}")
-    
-            output_dir = kwargs.get("output_dir", "../output")
-            
-            # Save the generated texts as .txt
-            with open(f"{output_dir}/generated_texts.txt", "w") as f:
-                for text in generated_texts:
-                    f.write(text + "\n")
-    
-            # Parse JSON strings and save as CSV
-            rows = []
+    def generate(self, data, gen_generation_params, **kwargs):
+        self.generator.set_mode("generate")
+        self.discriminator.set_mode("generate")
+
+        batch_size = kwargs.get("batch_size", 1)
+        output_dir = kwargs.get("output_dir", "../output")
+
+        # Ensure output directory exists
+        os.makedirs(output_dir, exist_ok=True)
+
+        generated_texts = []
+        all_pred_labels = []
+        all_true_labels = []
+
+        # 1. Iterate over all prompt batches
+        for i in range(0, len(data["prompt"]), batch_size):
+            # 1.1 Extract the prompt batch and corresponding real data batch
+            batch_prompts = data["prompt"][i:i+batch_size]
+            real_batch = data["data"][i:i+batch_size]
+
+            # 1.2 Generate texts for this batch
+            batch_generated = self.generator.generate(batch_prompts, gen_generation_params)
+            generated_texts.extend(batch_generated)
+
+            # 1.3 Format discriminator inputs and run prediction for this batch
+            prompts_batch, labels_batch = self.format_discriminator_data(
+                real_data=real_batch,
+                generated_texts=batch_generated
+            )
+            results_batch = self.discriminator.predict(prompts_batch, labels_batch)
+
+            # 1.4 Collect predicted labels and true labels
+            pred_labels_batch = results_batch.get("labels", [])
+            all_pred_labels.extend(pred_labels_batch)
+            all_true_labels.extend(labels_batch)
+
+        # 2. Compute overall accuracy
+        if all_true_labels:
+            correct = sum(p == t for p, t in zip(all_pred_labels, all_true_labels))
+            accuracy = correct / len(all_true_labels)
+        else:
+            accuracy = 0.0
+
+        print(f"{{Discriminator Accuracy: {accuracy}}}")
+
+        # 3. Save all generated texts to a .txt file
+        with open(f"{output_dir}/generated_texts.txt", "w") as f:
             for text in generated_texts:
-                try:
-                    # Each text is a JSON object or list of objects
-                    data_list = json.loads(text)
-                    if isinstance(data_list, dict):
-                        data_list = [data_list]
-                    rows.extend(data_list)
-                except Exception as e:
-                    print(f"Error parsing JSON: {e}\nText: {text}")
-    
-            # Save all generated data
-            if rows:
-                df = pd.DataFrame(rows)
-                df.to_csv(f"{output_dir}/generated_data_all.csv", index=False)
+                f.write(text + "\n")
+
+        # 4. Parse JSON outputs and save all data as CSV
+        rows = []
+        for text in generated_texts:
+            try:
+                data_list = json.loads(text)
+                if isinstance(data_list, dict):
+                    data_list = [data_list]
+                rows.extend(data_list)
+            except Exception as e:
+                print(f"Error parsing JSON: {e}\nText: {text}")
+
+        if rows:
+            df = pd.DataFrame(rows)
+            df.to_csv(f"{output_dir}/generated_data_all.csv", index=False)
+        else:
+            print("No valid data to save as CSV found.")
+
+        # 5. Save only those samples predicted as "real" by the discriminator
+        if rows and all_pred_labels:
+            real_indices = [i for i, label in enumerate(all_pred_labels) if label == 1]
+            real_rows = [rows[i] for i in real_indices if i < len(rows)]
+            if real_rows:
+                df_real = pd.DataFrame(real_rows)
+                df_real.to_csv(f"{output_dir}/generated_data_real.csv", index=False)
             else:
-                print("No valid data to save as CSV found.")
-    
-            # Save only samples predicted as real by the discriminator
-            if rows and "labels" in results:
-                pred_labels = results["labels"]
-                real_indices = [i for i, label in enumerate(pred_labels) if label == 1]
-                real_rows = [rows[i] for i in real_indices if i < len(rows)]
-                if real_rows:
-                    df_real = pd.DataFrame(real_rows)
-                    df_real.to_csv(f"{output_dir}/generated_data_real.csv", index=False)
-                else:
-                    print("No samples predicted as real by the discriminator.")
+                print("No samples predicted as real by the discriminator.")
+
         
 
 class GANModel(ABC):
@@ -136,6 +170,7 @@ class GANModel(ABC):
             self.tokenizer.pad_token = self.tokenizer.eos_token
         self.mode = None
         self.optimizer = None
+        self.max_new_tokens = self.tokenizer.model_max_length
     
     def get_model(self):
         return self.model
@@ -181,7 +216,7 @@ class Generator(GANModel):
         ).to(self.model.device)
 
         with torch.no_grad():
-            outputs = self.model.generate(**inputs, **(generation_params or {}))
+            outputs = self.model.generate(**inputs, max_new_tokens=self.max_new_tokens, **(generation_params or {}))
         
         generated_texts = []
         for output in outputs:
@@ -250,8 +285,7 @@ class Generator(GANModel):
         logits = outputs.logits
 
         log_probs = torch.nn.functional.log_softmax(logits, dim=-1)
-        rl_loss_total = 0.0
-        count = 0
+        rl_losses = []
 
         for b in range(len(generated_texts)):
             target_ids = input_ids_padded[b]
@@ -266,10 +300,13 @@ class Generator(GANModel):
             selected_log_probs = log_probs_b[rl_indices, target_ids[rl_indices]]
             reward = rewards[b]
 
-            rl_loss_total += (-reward * selected_log_probs.mean())
-            count += 1
+            reward_tensor = torch.tensor(rewards[b], device=self.model.device)
+            rl_losses.append(-reward_tensor * selected_log_probs.mean())
 
-        rl_loss = rl_loss_total / max(1, count)  # avoid division by zero
+        if rl_losses:
+            rl_loss = torch.stack(rl_losses).mean()
+        else:
+            rl_loss = torch.tensor(0.0, device=self.model.device, requires_grad=True)
 
         # Compute CE grad norm
         self.model.zero_grad()

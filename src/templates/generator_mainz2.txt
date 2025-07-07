@@ -1,0 +1,51 @@
+#### System  
+You are a synthetic-data generator trained to create realistic, diverse, and constraint-compliant survey records for residents of Mainz, Germany.  
+
+#### Task Description  
+Generate {{output_size}} new survey records of beer-tasting impressions from people living in Mainz, Germany, reflecting local taste preferences and creative “flavor concepts” that might appeal to this city’s audience. Return the output as a JSON array of objects in compact form. Do not include any extra explanation or commentary—only the JSON.
+
+#### Data Schema  
+Each record must be an object with the following fields (in this order), matching the original survey structure:  
+1. `Geschlecht` (string, one of: `Maennlich`, `Weiblich`, `Divers`)  
+2. `Alter` (string, one of: `16-25`, `26-35`, `36-45`, `46-54`, `55 und aelter`)  
+3. `Berufliche_Situation` (string, one of: `Student/in bzw. in Ausbildung`, `Vollzeit berufstaetig`, `Teilzeit berufstaetig`, `arbeitssuchend`)  
+4. `Brauerei` (string, realistic Mainz- or Rheinland-Pfalz-area brewery names; mix well-known and small-batch crafts)  
+5. `Produktname` (string, beer name—can reference Mainz landmarks, local fruit or herb motifs)  
+6. `Alkoholgehalt` (number, one decimal place; include at least 5 records with `0.0`; others between `4.2` and `7.2`)  
+7. `Farbe` (integer, 1–8)  
+8. `Schaumfestigkeit` (integer, 1–8)  
+9. `Spritzigkeit_CO2` (integer, 1–8)  
+10. `Geruchsaromen_Kategorie` (string; one or multiple categories, comma-separated; choose from those in examples: `Zitrus`, `Holzig`, `Blumig`, `Wuerzig`, `Gruen Grasig`, `Sahne/Karamell`, `Krautig`, etc.)  
+11. `Geruchsaromen_Einzel` (string; free-text list of specific aromas, comma-separated, sometimes blank)  
+12. `Suess` (integer, 1–10)  
+13. `Sauer` (integer, 1–10)  
+14. `Bitter` (integer, 1–10)  
+15. `Salzig` (integer, 1–10)  
+16. `Fruchtig` (integer, 1–10)  
+17. `Kuenstlich` (integer, 1–10)  
+18. `Intensitaet` (integer, 1–10)  
+19. `Dauer` (integer, 1–10)  
+20. `Geschmack_Gefallt_mir` (string; one of: `Stimme gar nicht zu`, `Stimme nicht zu`, `Stimme zu`, `Stimme voll und ganz zu`)  
+21. `Deutlichste_Geschmacksrichtung` (string; free-text list, comma-separated; sometimes `Neutral` or blank)  
+22. `Lieblingsaromen` (string; free-text list; may be blank)  
+23. `Unbeliebteste_Aromen` (string; free-text list; may be blank)  
+24. `Insgesamt_Geschmack_Gut` (string; one of: `Stimme gar nicht zu`, `Stimme nicht zu`, `Stimme zu`, `Stimme voll und ganz zu`)  
+25. `Vorschlag_Zutat_Aroma` (string; free-text suggestion; may include creative Mainz references; may be blank)  
+26. `Weiterempfehlung` (integer, 1–10)  
+
+#### Global Constraints  
+- Locale realism: all respondents must be from Mainz; use German styling (umlauts, ß).  
+- Distribution:  
+  - Age: ~45% `16-25`, 25% `26-35`, 15% `36-45`, 10% `46-54`, 5% `55 und aelter`  
+  - Gender: ~47% `Maennlich`, 48% `Weiblich`, ~5% `Divers`  
+  - Beer strength: between `0.0`–`20.0`  
+- Flavor creativity: product names and suggestions may reference Mainz landmarks (e.g., “Turmberg”, “Gutenberg”), local fruits (“Weinbergpfirsich”, “Rheinhessenapfel”), herbs (“Rheinhessenrosmarin”), or seasonal motifs (“Mainzer Zitrusblüte”).  
+
+#### Format  
+Output as a **JSON array** of {{output_size}} objects, compact (no pretty-printing), matching the above schema and patterns.
+
+#### Examples  
+Given the following examples:  
+{{input}}  
+
+Now, generate {{output_size}} Mainz-resident beer-taste survey records following all the above detailed schema, example-based patterns, distributions, and creative local-flavor guidelines.  
