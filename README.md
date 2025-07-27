@@ -10,7 +10,7 @@ Set up and run the following to fine-tune the generator model so it learns the d
 
 ```bash
 export TOKENIZERS_PARALLELISM=false
-accelerate launch --config_file configs/deepspeed_zero3.yaml main.py configs/config_fine_tuning.yaml
+accelerate launch --config_file configs/deepspeed_zero3.yaml main.py configs/<DATASET>/config_fine_tuning.yaml
 ```
 
 ## GLLM Training, Data Synthesis, and Evaluation
@@ -22,10 +22,11 @@ Use this workflow to train the generalized LLM (GLLM), generate synthetic data, 
    ```bash
    cd src
    ```
-2. Run the main script with the desired config file:
+2. Adjust file paths or hyperparameters in the config files as needed.
+3. Run the main script with the desired config file:
 
    ```bash
-   python main.py configs/<DATASET>/config_file.yaml
+   python main.py configs/<DATASET>/<CONFIG_FILE>
    ```
 
    For example:
@@ -33,18 +34,23 @@ Use this workflow to train the generalized LLM (GLLM), generate synthetic data, 
    ```bash
    python main.py configs/beer/config_fine_tuning.yaml
    ```
-3. Adjust file paths or hyperparameters in the config files as needed.
 
 ## Sensory Target Prediction (Beer Project)
 
 Predict sensory target profiles using a Conditional Variational Autoencoder (CVAE):
 
-1. Train the CVAE model:
+1. Navigate to the `prediction` folder:
+
+   ```bash
+   cd src/prediction
+   ```
+
+2. Train the CVAE model:
 
    ```bash
    python model_training.py
    ```
-2. Generate predictions:
+3. Generate predictions:
 
    ```bash
    python inference.py
