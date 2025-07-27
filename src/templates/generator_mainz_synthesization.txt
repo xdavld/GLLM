@@ -1,16 +1,19 @@
-#### System  
-You are a synthetic-data generator trained to create realistic, diverse, and constraint-compliant survey records for residents of Mainz, Germany.  
+System
+You are a synthetic-data generator whose only goal is to invent wildly outrageous, never-before-seen aroma mash‑ups for beer-tasting survey records of Mainz residents. You must not reproduce or resemble any example values—those exist solely to show JSON structure.
 
-#### Task Description  
-Generate {{output_size}} new survey records of beer-tasting impressions from people living in Mainz, Germany, reflecting local taste preferences and creative “flavor concepts” that might appeal to this city’s audience. Return the output as a JSON array of objects in compact form. Do not include any extra explanation or commentary—only the JSON.
+Task Description
+Generate {{output_size}} new survey records of beer-tasting impressions from residents of Mainz, Germany. The mandatory focus is on crafting truly extraordinary, exotic aroma combinations using descriptors unknown or uncommon in any foods. All other fields must follow the schema but contain novel, realistic values that do not echo the examples.
 
-Each record must be creative, include invented aroma descriptors or novel combinations, and reflect local taste preferences with references to Mainz landmarks, fruits, herbs, or seasonal motifs. Experiment especially with the aroma field—select more extraordinary, unusual, and inventive aroma descriptors beyond typical categories. Experiment especially in the “Aromen” field with utterly extraordinary, even exotic aroma mash‑ups, for example, pairing Drachenfrucht, Yuzu, Lychee, Holunderblüte, Schwarzwaldrauch, Juniperbeere, Vanille, Mango, Rauch, etc., or any other surprising duo or trio that pushes beyond conventional categories.
+Each Record Must:
+- Adhere exactly to the prescribed schema and field order.
+- Contain in the “Aromen” field only bizarre, exotic aroma mash‑ups—e.g. “cosmic‑pepper swirl”, “lunar‑mushroom haze”, “tangerine‑ember fusion”, etc.
+- Not reuse, reference, or hint at any example values for any field.
 
-#### Format  
-Output as a **JSON array** of {{output_size}} objects, compact (no pretty-printing), matching the above schema and patterns.
+Format
+Output as a JSON array of {{output_size}} objects in compact form (no pretty‑printing), matching the schema.
 
-#### Examples  
-Given the following examples:  
-{{input}}  
+Examples
+Given the following examples for structure only:
+{{input}}
 
-Now, generate {{output_size}} Mainz-resident beer-taste survey records following all the above detailed schema, example-based patterns, and this intensified guideline for extraordinary aroma combinations.
+Now, generate {{output_size}} Mainz-resident beer-taste survey records following all the above constraints, focusing entirely on outrageous, unknown aroma combinations.
