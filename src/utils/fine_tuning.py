@@ -47,18 +47,3 @@ def fine_tune(general_cfg, data_cfg, training_cfg):
     )
 
     trainer.train()
-
-    if trainer.is_world_process_zero():
-
-        output_dir = training_cfg.get("output_dir", "../output_dir")
-        for path in glob.glob(os.path.join(output_dir, "checkpoint*")):
-            if os.path.isdir(path):
-                try:
-                    shutil.rmtree(path)
-                except Exception as e:
-                    print(f"Warning: Could not delete {path}: {e}")
-
-        # Save the best model
-        trainer.model.save_pretrained(output_dir)
-        # Save the tokenizer
-        tokenizer.save_pretrained(output_dir)

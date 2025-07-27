@@ -6,7 +6,7 @@ from utils.args import load_config
 from utils.fine_tuning import fine_tune
 from utils.training import train
 from utils.synthesization import synthesize
-#from utils.synthesization_leo import synthesize_leo
+from utils.evaluation import evaluate, evaluate_beer
 
 def main():
     logging.basicConfig(
@@ -75,21 +75,32 @@ def main():
         except Exception as e:
             logging.exception("An error occurred during synthesization: %s", e)
             raise
-
-    elif op == "prediction":
-        logging.info("Starting prediction process.")
-        # Prediction logic would go here
+    
+    elif op == "evaluation_beer":
+        logging.info("Starting evaluation process.")
+        general_cfg = cfg.get("General", {}) if isinstance(cfg.get("General"), dict) else {}
+        data_cfg = cfg.get("Data", []) if isinstance(cfg.get("Data"), list) else {}
         try:
-            predict()
-            logging.info("Prediction completed successfully.")
+            evaluate_beer(general_cfg=general_cfg, data_cfg=data_cfg)
+            logging.info("Evaluation completed successfully.")
         except Exception as e:
-            logging.exception("An error occurred during prediction: %s", e)
+            logging.exception("An error occurred during evaluation: %s", e)
+            raise
+
+    elif op == "evaluation":
+        logging.info("Starting evaluation process.")
+        general_cfg = cfg.get("General", {}) if isinstance(cfg.get("General"), dict) else {}
+        data_cfg = cfg.get("Data", []) if isinstance(cfg.get("Data"), list) else {}
+        try:
+            evaluate(general_cfg=general_cfg, data_cfg=data_cfg)
+            logging.info("Evaluation completed successfully.")
+        except Exception as e:
+            logging.exception("An error occurred during evaluation: %s", e)
             raise
 
     else:
         logging.error(f"Unknown operation: %s", op)
         raise ValueError(f"Unknown operation: {op}")
-
 
 if __name__ == "__main__":
     main()

@@ -1,13 +1,13 @@
 General:
   operation: "training"
-  generator_name_or_path: "../models/Llama-3.2-3B-Instruct/FineTuned/Mainz/checkpoint-50"
+  generator_name_or_path: "../models/Llama-3.2-3B-Instruct/FineTuned/Mainz/checkpoint-45"
   discriminator_name_or_path: "../models/Llama-3.2-1B-Instruct/Base"
 
 Data:
   prompt_template_path: "templates/generator_mainz.txt"
   generator_prompt_template_path: "templates/generator_mainz.txt"
   discriminator_prompt_template_path: "templates/discriminiator_mainz.txt"
-  sample_size: 3
+  sample_size: 1
   output_size: 1
   dataset_path: "data/private/kkr_data_cleaned_v2.csv"
   output_path: "data/synthetic/generated_data.csv"
@@ -16,7 +16,7 @@ Data:
 Training:
   generator_lr: 5e-5
   discriminator_lr: 5e-5
-  alpha: 0.5
+  alpha: 0.25
   num_epochs: 10
   batch_size: 1
   output_dir: "../models/LLMGAN/Mainz"

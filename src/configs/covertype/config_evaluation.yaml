@@ -1,0 +1,17 @@
+General:
+  operation: "evaluation"
+  output_dir: "../evaluation"
+  seed: 42
+
+Data:
+  - dataset: Adult
+    dataset_path: data/public/processed/adult
+    target_column: income
+    
+  - dataset: Covertype
+    dataset_path: data/public/processed/covertype
+    target_column: Cover_Type
+
+  - dataset: CreditCardData
+    dataset_path: data/public/processed/creditCardData
+    target_column: Credit_risk

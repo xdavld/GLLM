@@ -1,0 +1,22 @@
+General:
+  operation: "training"
+  generator_name_or_path: "../models/Llama-3.2-3B-Instruct/FineTuned/CreditCardData/checkpoint-45"
+  discriminator_name_or_path: "../models/Llama-3.2-1B-Instruct/Base"
+
+Data:
+  prompt_template_path: "templates/generator.txt"
+  generator_prompt_template_path: "templates/generator.txt"
+  discriminator_prompt_template_path: "templates/discriminiator.txt"
+  sample_size: 1
+  output_size: 1
+  dataset_path: "data/public/processed/creditCardData/train.csv"
+  output_path: "data/synthetic/generated_data.csv"
+  seed: 42
+
+Training:
+  generator_lr: 5e-5
+  discriminator_lr: 5e-5
+  alpha: 0.25
+  num_epochs: 10
+  batch_size: 1
+  output_dir: "../models/GLLM/CreditCardData"

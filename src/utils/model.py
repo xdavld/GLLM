@@ -94,7 +94,7 @@ class LLMGAN:
         all_true_labels = []
 
         # 1. Iterate over all prompt batches
-        for i in range(0, len(data["prompt"]), batch_size):
+        for i in tqdm(range(0, len(data["prompt"]), batch_size), desc="Generating Synthetic Data"):
             # 1.1 Extract the prompt batch and corresponding real data batch
             batch_prompts = data["prompt"][i:i+batch_size]
             real_batch = data["data"][i:i+batch_size]
@@ -168,10 +168,11 @@ class GANModel(ABC):
         self.tokenizer = AutoTokenizer.from_pretrained(model)
         if self.tokenizer.pad_token is None:
             self.tokenizer.pad_token = self.tokenizer.eos_token
+        if self.model.config.pad_token_id is None:
+            self.model.config.pad_token_id = self.tokenizer.pad_token_id
         self.mode = None
         self.optimizer = None
-        self.max_new_tokens = self.tokenizer.model_max_length
-    
+        
     def get_model(self):
         return self.model
     
@@ -195,6 +196,7 @@ class Generator(GANModel):
     def __init__(self, model: str):
         super().__init__(model)
         self.alpha = None
+        self.max_new_tokens = 500
     
     def __call__(self, inputs, generation_params = None):
         return self.generate(inputs, generation_params)

@@ -1,25 +1,41 @@
-Evaluate whether these data can be classified as real or synthetic by focusing on:
+Evaluate whether these beer-tasting survey records from Mainz can be classified as real or synthetic by focusing on:
 
-Correct JSON structure (valid syntax, required quotation marks, proper bracketing).
+1. **Correct JSON structure**  
+   – Valid syntax, required quotation marks, proper brackets.  
 
-Plausibility of individual fields (age ranges, common categories for workclass, occupation, etc.).
+2. **Plausibility of individual fields**  
+   – `Geschlecht`: one of `Maennlich`, `Weiblich`, `Divers`.  
+   – `Alter`: one of `16-25`,`26-35`,`36-45`,`46-54`,`55 und aelter`.  
+   – `Berufliche_Situation`: one of `Student/in bzw. in Ausbildung`,`Vollzeit berufstaetig`,`Teilzeit berufstaetig`,`arbeitssuchend`.  
+   – `Brauerei`: realistic Mainz or Rheinland-Pfalz brewery names.  
+   – `Produktname`: plausible Mainz-flavored names (e.g. “Weinbergpfirsich Pils”).  
+   – `Alkoholgehalt`: number between 0.0 and 7.5 (one decimal).  
+   – `Farbe`, `Schaumfestigkeit`, `Spritzigkeit_CO2`: integers 1–8.  
+   – `Geruchsaromen_Kategorie`: only from allowed list (e.g. `Zitrus`, `Holzig`, `Blumig`, etc.), comma-separated when multiple.  
+   – `Geruchsaromen_Einzel`, `Lieblingsaromen`, `Unbeliebteste_Aromen`, `Vorschlag_Zutat_Aroma`: free-text in German with umlauts/ß, plausible words, blank in ~10–15% of cases.  
+   – Ratings (`Suess`, `Sauer`, `Bitter`, `Salzig`, `Fruchtig`, `Kuenstlich`, `Intensitaet`, `Dauer`): integers 1–10, clustering 3–7 with occasional 1 or 10.  
+   – `Geschmack_Gefallt_mir`, `Insgesamt_Geschmack_Gut`: one of `Stimme gar nicht zu`, `Stimme nicht zu`, `Stimme zu`, `Stimme voll und ganz zu`.  
+   – `Weiterempfehlung`: integer 1–10.  
 
-Consistency between fields (e.g., age vs. relationship, marital-status).
+3. **Consistency between fields**  
+   – Age versus Berufliche_Situation (e.g. “16-25” plausible as Student).  
+   – At least 5 records with `Alkoholgehalt: 0.0`.  
+   – Free-text aroma categories matching category field.  
+   – German styling (umlauts, ß) throughout.  
 
-Realistic value ranges (e.g., fnlwgt, education-num, hours-per-week within typical limits).
+4. **Realistic distribution and style**  
+   – Age/gender/occupation distributions roughly match known proportions.  
+   – Creative local references appear plausible.  
+   – Missing values appear around 10–15% for free-text fields.  
 
-If the JSON structure is correct and all field values appear plausible and consistent, then the data is likely real (1). If there are syntax errors, unusual categories, or contradictory combinations, then the data is synthetic (0).
+If structure is valid and all values are plausible and consistent with a real Mainz beer-tasting survey, label as real (1). If there are syntax errors, invalid categories or ranges, contradictory combinations, or obviously fabricated text, label as synthetic (0).
 
-You must classify each text snippet as real (1) or synthetic (0). Return exactly one digit (0 or 1) and nothing else—no explanation, no JSON, no extra spaces.
+Return exactly one digit (`0` or `1`) and nothing else—no explanation, no JSON, no extra spaces.
 
-Example 1:
-Data: [{"age": 48, "workclass": "Self-emp-not-inc", "fnlwgt": 265477, "education": "Assoc-acdm", "education-num": 12, "marital-status": "Married-civ-spouse", "occupation": "Prof-specialty", "relationship": "Husband", "race": "White", "sex": "Male", "capital-gain": 0, "capital-loss": 0, "hours-per-week": 40, "native-country": "United-States", "class": "<=50K"}]
+**Example**  
+Data: `[{"Geschlecht":"Weiblich","Alter":"26-35","Berufliche_Situation":"Vollzeit berufstaetig",…}]`  
 Classification: 1
 
-Example 2:
-Data: [{"age": 448, "workclass": "ajksdhf", "fnlwgt": 26234325477, "education": "asdklfsaf", "education-num": 123, "marital-status": "jkasdhfsadf", "occupation": "Prof-specialty", "kasjdfljasd": "Husband", "race": "Green", "sex": "Giraffe", "capital-gain": 0, "capital-loss": 0, "hours-per-week": 12030, "native-country": "United-States", "class": "<=50K"}]
-Classification: 0
-
-Now classify:
-Data: {{sample}}
+Now classify:  
+Data: {{sample}}  
 Classification:

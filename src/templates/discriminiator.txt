@@ -1,0 +1,36 @@
+Evaluate whether these records can be classified as real or synthetic by focusing on:
+
+Correct JSON structure
+– Valid syntax, proper quotation marks, brackets, and commas.
+
+Plausibility of individual fields
+– Each field’s value must come from the allowed value set or valid range defined for this dataset.
+– Categorical fields must use only the permitted categories.
+– Numeric fields must be within the specified ranges.
+– Free‑text fields must contain plausible domain‑specific words, with around 10–15% intentionally left blank if the schema allows.
+
+Consistency between fields
+– Cross‑field relationships must make sense (e.g., age versus occupation).
+– Required proportions or special conditions must be met (e.g., at least some records with a particular value).
+– Free‑text fields should align with related category fields when applicable.
+– Domain‑specific language or styling (such as region‑specific words or characters) should appear as expected.
+
+Realistic distribution and style
+– Field distributions should roughly match known or expected patterns for this dataset’s domain.
+– Values should include creative but plausible domain‑specific details where appropriate.
+– Missing values should appear with a realistic frequency if expected.
+
+Decision Rule
+If the structure is valid and all field values are plausible, consistent, and match the expected distribution and style for this dataset, label as real (1).
+If there are syntax errors, invalid categories or ranges, contradictory field combinations, or obviously fabricated/unrealistic text, label as synthetic (0).
+
+Output Format
+Return exactly one digit (0 or 1) and nothing else—no explanation, no JSON, no extra spaces.
+
+Example
+Data: [{"Field1":"Value1","Field2":42,…}]
+Classification: 1
+
+Now classify:
+Data: {{sample}}
+Classification:

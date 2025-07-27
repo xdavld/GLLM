@@ -1,0 +1,8 @@
+General:
+  operation: "evaluation_beer"
+  output_dir: "../evaluation/beer"
+  seed: 42
+
+Data:
+  - dataset: Beer
+    dataset_path: "data/private/evaluation_data"

@@ -1,0 +1,16 @@
+General:
+  operation: "synthesization"
+  generator_name_or_path: "../models/GLLM/CreditCardData/Generator/checkpoint-10"
+  discriminator_name_or_path: "../models/GLLM/CreditCardData/Discriminator/checkpoint-10"
+
+Data:
+  prompt_template_path: "templates/generator.txt"
+  discriminator_prompt_template_path: "templates/discriminiator.txt"
+  sample_size: 1
+  output_size: 1
+  dataset_path: "data/public/processed/creditCardData/train.csv"
+  seed: 42
+
+Generation:
+  batch_size: 1
+  output_dir: "data/public/processed/creditCardData/gllm.csv"
