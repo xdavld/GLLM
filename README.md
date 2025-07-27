@@ -1,4 +1,4 @@
-# LLM-Based Synthetic Framework for Data-Driven Product Innovation
+# GLLM: A GAN-Inspired LLM Framework for the Synthetic Generation of Tabular Datasets
 
 ## Description
 
