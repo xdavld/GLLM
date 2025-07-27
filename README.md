@@ -1,8 +1,7 @@
 # GLLM: A GAN-Inspired LLM Framework for the Synthetic Generation of Tabular Datasets
 
 ## Description
-
-Design and implementation of an LLM-based synthetic framework for data-driven product innovation, demonstrated through beer production.
+Generative framework that integrates Generative Adversarial Network (GAN) principles with Large Language Models (LLMs) to synthetically augment small-scale tabular dataset
 
 ## Fine-Tuning the Generator
 
