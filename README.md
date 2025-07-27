@@ -1,7 +1,7 @@
 # GLLM: A GAN-Inspired LLM Framework for the Synthetic Generation of Tabular Datasets
 
 ## Description
-Generative framework that integrates Generative Adversarial Network (GAN) principles with Large Language Models (LLMs) to synthetically augment small-scale tabular dataset
+Generative framework that integrates Generative Adversarial Network (GAN) principles with Large Language Models (LLMs) to synthetically augment small-scale tabular datasets.
 
 ## 1. Fine-Tuning the Generator
 
