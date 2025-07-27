@@ -37,7 +37,7 @@ Use this workflow to train the generalized LLM (GLLM), generate synthetic data, 
 
 ## Sensory Target Prediction (Beer Project)
 
-Predict sensory target profiles using a Variational Autoencoder (VAE):
+Predict sensory target profiles using a Conditional Variational Autoencoder (CVAE):
 
 1. Train the CVAE model:
 
