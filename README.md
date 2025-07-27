@@ -1,107 +1,51 @@
-# LLM-Based Synthetic Framework for Data-Driven Product Innovation in Beer Production
+# LLM-Based Synthetic Framework for Data-Driven Product Innovation
 
-This repository contains the implementation of a Large Language Model (LLM) based synthetic framework designed for data-driven product innovation, demonstrated through beer production optimization.
+## Description
 
-## Overview
+Design and implementation of an LLM-based synthetic framework for data-driven product innovation, demonstrated through beer production.
 
-The framework consists of several key components:
-- **Generator Fine-tuning**: Training the LLM to understand data structure and patterns
-- **GLLM Training**: Core language model training pipeline
-- **Data Synthesis**: Synthetic data generation capabilities
-- **Evaluation**: Performance assessment and validation tools
-- **Sensory Prediction**: Beer sensory profile prediction using VAE models
+## Fine-Tuning the Generator
 
-## Quick Start
-
-### Prerequisites
-- Python 3.8+
-- Required dependencies (see `requirements.txt`)
-- Accelerate and DeepSpeed for distributed training
-
-### Installation
-
-```bash
-git clone <repository-url>
-cd <repository-name>
-pip install -r requirements.txt
-```
-
-## Usage
-
-### 1. Generator Fine-tuning
-
-Fine-tune the generator to learn data structure and develop an understanding of the dataset patterns:
+Set up and run the following to fine-tune the generator model so it learns the data structure and gains familiarity with the dataset:
 
 ```bash
 export TOKENIZERS_PARALLELISM=false
 accelerate launch --config_file configs/deepspeed_zero3.yaml main.py configs/config_fine_tuning.yaml
 ```
 
-### 2. General Training, Synthesis, and Evaluation
+## GLLM Training, Data Synthesis, and Evaluation
 
-All main operations (GLLM training, data synthesis, and evaluation) are executed from the `src` directory:
+Use this workflow to train the generalized LLM (GLLM), generate synthetic data, and evaluate model performance:
 
-1. Navigate to the source directory:
+1. Navigate to the `src` folder:
+
    ```bash
    cd src
    ```
+2. Run the main script with the desired config file:
 
-2. Run the desired configuration:
    ```bash
-   python main.py configs/DATASET/CONFIG_FILE
+   python main.py configs/<DATASET>/config_file.yaml
    ```
 
-   **Example for beer dataset:**
+   For example:
+
    ```bash
    python main.py configs/beer/config_fine_tuning.yaml
    ```
+3. Adjust file paths or hyperparameters in the config files as needed.
 
-### 3. Configuration Management
+## Sensory Target Prediction (Beer Project)
 
-- Configuration files are located in the `configs/` directory
-- Adjust file paths and hyperparameters in the respective config files as needed
-- Each dataset has its own configuration subdirectory (e.g., `configs/beer/`)
+Predict sensory target profiles using a Variational Autoencoder (VAE):
 
-### 4. Beer Sensory Profile Prediction
+1. Train the CVAE model:
 
-For the beer project, you can predict sensory target profiles using the following two-step process:
+   ```bash
+   python model_training.py
+   ```
+2. Generate predictions:
 
-#### Step 1: Train the VAE Model
-```bash
-python model_training.py
-```
-
-#### Step 2: Run Inference
-```bash
-python inference.py
-```
-
-## Project Structure
-
-```
-├── src/                    # Source code directory
-├── configs/               # Configuration files
-│   ├── beer/             # Beer-specific configurations
-│   └── deepspeed_zero3.yaml
-├── model_training.py     # VAE model training script
-├── inference.py          # Prediction inference script
-└── main.py              # Main execution script
-```
-
-## Configuration Files
-
-The framework uses YAML configuration files to manage:
-- Model hyperparameters
-- Data paths and preprocessing settings
-- Training configurations
-- Evaluation metrics
-
-Modify the configuration files in the `configs/` directory to customize the framework for your specific use case.
-
-## Contributing
-
-Please ensure all contributions follow the established code structure and include appropriate configuration files for new datasets or model variants.
-
-## License
-
-[Add your license information here]
+   ```bash
+   python inference.py
+   ```
